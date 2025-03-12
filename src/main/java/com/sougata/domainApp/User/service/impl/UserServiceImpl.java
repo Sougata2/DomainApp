@@ -1,6 +1,7 @@
 package com.sougata.domainApp.User.service.impl;
 
 import com.sougata.domainApp.User.domain.entities.User;
+import com.sougata.domainApp.User.domain.errors.UserMergeException;
 import com.sougata.domainApp.User.domain.errors.UserNotFoundException;
 import com.sougata.domainApp.User.repository.UserRepository;
 import com.sougata.domainApp.User.service.UserService;
@@ -8,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -30,7 +32,7 @@ public class UserServiceImpl implements UserService {
         if (foundUser.isEmpty()) {
             throw new UserNotFoundException("failed to UPDATE, user not found!");
         }
-        User updatedUser = mergeUser(foundUser.get(), user);
+        User updatedUser = mergeUser2(foundUser.get(), user);
         System.out.println("UPDATED USER: " + updatedUser);
         return userRepository.save(updatedUser);
     }
@@ -67,6 +69,24 @@ public class UserServiceImpl implements UserService {
 
         existingUser.setUpdatedAt(LocalDateTime.now()); // Update timestamp
 
+        return existingUser;
+    }
+
+    private User mergeUser2(User existingUser, User requestUser) throws UserMergeException {
+        // takes the new values from the requestUser and then paste it in
+        // original user. Thus updating existing user
+        try {
+            for (Field field : existingUser.getClass().getDeclaredFields()) {
+                field.setAccessible(true);
+                Object newValue = field.get(requestUser);
+                if (newValue != null) {
+                    field.set(existingUser, newValue);
+                }
+
+            }
+        } catch (IllegalAccessException e) {
+            throw new UserMergeException();
+        }
         return existingUser;
     }
 }
