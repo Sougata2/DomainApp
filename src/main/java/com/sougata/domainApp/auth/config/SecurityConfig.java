@@ -23,7 +23,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, JwtAuthenticationFilter jwtAuthenticationFilter) throws Exception {
         httpSecurity.authorizeHttpRequests(
                         auth -> auth
-                                .requestMatchers("/domain/user/**").hasAnyRole("USER")
+//                                .requestMatchers("/domain/user/**").hasAnyRole("USER")
                                 .anyRequest().permitAll()
                 )
                 .csrf(AbstractHttpConfigurer::disable)
