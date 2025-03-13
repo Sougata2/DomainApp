@@ -5,6 +5,8 @@ import com.sougata.domainApp.User.domain.errors.UserMergeException;
 import com.sougata.domainApp.User.domain.errors.UserNotFoundException;
 import com.sougata.domainApp.User.repository.UserRepository;
 import com.sougata.domainApp.User.service.UserService;
+import com.sougata.domainApp.auth.domain.entity.Role;
+import com.sougata.domainApp.auth.repository.RoleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +19,7 @@ import java.util.*;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
 
     @Override
     public User createUser(User user) {
@@ -51,6 +54,18 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<User> findAll() {
         return userRepository.findAll();
+    }
+
+    @Transactional
+    @Override
+    public void addRole(User user, String role) throws Exception {
+        Optional<Role> foundRole = roleRepository.findByName(role);
+        if (foundRole.isPresent()) {
+            user.addRole(foundRole.get());
+        } else {
+            throw new Exception("role " + role + " not found!");
+        }
+        userRepository.save(user);
     }
 
     private User mergeUser(User existingUser, User requestUser) {

@@ -2,16 +2,15 @@ package com.sougata.domainApp.auth.domain.entity;
 
 import com.sougata.domainApp.User.domain.entities.User;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 @Entity
 @Table(name = "roles")
+@Builder
 @Getter
 @Setter
 @AllArgsConstructor
@@ -30,5 +29,5 @@ public class Role {
             joinColumns = @JoinColumn(name = "role_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id")
     )
-    private List<User> users;
+    private List<User> users = new ArrayList<>();
 }

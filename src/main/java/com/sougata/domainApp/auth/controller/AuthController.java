@@ -1,17 +1,25 @@
 package com.sougata.domainApp.auth.controller;
 
 import com.sougata.domainApp.User.domain.entities.User;
+import com.sougata.domainApp.User.domain.errors.UserNotFoundException;
 import com.sougata.domainApp.User.dto.response.UserResponse;
 import com.sougata.domainApp.User.service.UserService;
 import com.sougata.domainApp.auth.dto.request.LoginRequest;
 import com.sougata.domainApp.auth.dto.request.SignUpRequest;
+import com.sougata.domainApp.auth.dto.request.UserRoleRequest;
 import com.sougata.domainApp.auth.dto.response.LoginResponse;
+import com.sougata.domainApp.auth.dto.response.UserRoleResponse;
 import com.sougata.domainApp.auth.service.AuthService;
+import com.sougata.domainApp.auth.service.RoleService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
+import java.util.Optional;
 
 
 @RestController
@@ -20,6 +28,7 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
     private final AuthService authService;
     private final UserService userService;
+    private final RoleService roleService;
 
     @PostMapping("/sign-up")
     public ResponseEntity<UserResponse> signUp(@Valid @RequestBody SignUpRequest signUpRequest) {
@@ -55,6 +64,34 @@ public class AuthController {
                         .expiresIn(84600000L)
                         .build()
         );
+    }
+
+    @PostMapping("/add-role")
+    public ResponseEntity<UserRoleResponse> addRole(@RequestBody UserRoleRequest userRoleRequest) throws Exception {
+        // get the user by id
+        Optional<User> foundUser = userService.getById(userRoleRequest.getId());
+
+        // set the role
+        if (foundUser.isPresent()) {
+            userService.addRole(foundUser.get(), userRoleRequest.getRole());
+        } else {
+            throw new UserNotFoundException("User with id " + userRoleRequest.getRole() + " not found!");
+        }
+
+        // send response.
+        return ResponseEntity.ok(
+                UserRoleResponse.builder()
+                        .id(foundUser.get().getId())
+                        .firstName(foundUser.get().getFirstName())
+                        .roleName(userRoleRequest.getRole())
+                        .build()
+        );
+    }
+
+    @PostMapping("/create-role")
+    public ResponseEntity<String> createRole(@RequestBody Map<String, String> request) {
+        roleService.create(request.get("role"));
+        return ResponseEntity.ok(request.get("role") + " Role Created!");
     }
 
 }

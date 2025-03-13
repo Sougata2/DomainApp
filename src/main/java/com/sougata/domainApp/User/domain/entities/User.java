@@ -6,6 +6,7 @@ import lombok.*;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -39,13 +40,17 @@ public class User {
     @Column
     private LocalDateTime updatedAt;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "users_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
-    private List<Role> roles;
+    private List<Role> roles = new ArrayList<>();
+
+    public void addRole(Role role) {
+        roles.add(role);
+    }
 
     @PrePersist
     protected void onCreate() {

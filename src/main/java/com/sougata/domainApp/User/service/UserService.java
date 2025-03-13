@@ -19,4 +19,6 @@ public interface UserService {
 
     List<User> findAll();
 
+    void addRole(User user, String role) throws Exception;
+
 }
