@@ -26,12 +26,13 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, JwtAuthenticationFilter jwtAuthenticationFilter) throws Exception {
-        httpSecurity.authorizeHttpRequests(
+        httpSecurity
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .authorizeHttpRequests(
                         auth -> auth
                                 .requestMatchers("/domain/user/**").hasAnyRole("ADMIN")
                                 .anyRequest().permitAll()
                 )
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(
                         httpSecuritySessionManagementConfigurer ->
