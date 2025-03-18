@@ -11,9 +11,9 @@ import com.sougata.domainApp.auth.dto.response.LoginResponse;
 import com.sougata.domainApp.auth.dto.response.UserRoleResponse;
 import com.sougata.domainApp.auth.service.AuthService;
 import com.sougata.domainApp.auth.service.RoleService;
+import com.sougata.domainApp.shared.encrypt.EncryptService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
@@ -24,11 +24,12 @@ import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/domain/auth")
+@RequestMapping("/auth")
 public class AuthController {
     private final AuthService authService;
     private final UserService userService;
     private final RoleService roleService;
+    private final EncryptService encryptService;
 
     @PostMapping("/sign-up")
     public ResponseEntity<UserResponse> signUp(@Valid @RequestBody SignUpRequest signUpRequest) {
@@ -54,6 +55,14 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest loginRequest) {
+        String decodedString = null;
+        // write the decryption code.
+        try {
+            decodedString = encryptService.decrypt(loginRequest.getPassword());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        loginRequest.setPassword(decodedString);
         UserDetails userDetails = authService.authenticate(loginRequest.getEmail(), loginRequest.getPassword());
         String token = authService.generateToken(userDetails);
 
