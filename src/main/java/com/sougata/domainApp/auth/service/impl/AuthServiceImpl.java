@@ -32,9 +32,17 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public UserDetails authenticate(String email, String password) {
-        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
-        System.out.println(authentication.getDetails());
-        return userDetailsService.loadUserByUsername(email);
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(email, password)
+            );
+            System.out.println("User Authenticated: " + authentication.getAuthorities());
+            return userDetailsService.loadUserByUsername(email);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Authentication Failed: " + e.getMessage());
+            throw e;
+        }
     }
 
     @Override

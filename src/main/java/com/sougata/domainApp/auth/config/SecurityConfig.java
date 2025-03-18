@@ -30,8 +30,11 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(
                         auth -> auth
-                                .requestMatchers("/domain/user/**").hasAnyRole("ADMIN")
-                                .anyRequest().permitAll()
+                                // just because /domain is prefixed with every url, mentioning it here
+                                // will give error only, /domain mentioned in application.properties
+                                .requestMatchers("/user/**").hasRole("ADMIN")
+                                .requestMatchers("/auth/**").permitAll()
+                                .anyRequest().authenticated()
                 )
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(

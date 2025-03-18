@@ -62,8 +62,7 @@ public class AuthController {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        loginRequest.setPassword(decodedString);
-        UserDetails userDetails = authService.authenticate(loginRequest.getEmail(), loginRequest.getPassword());
+        UserDetails userDetails = authService.authenticate(loginRequest.getEmail(), decodedString);
         String token = authService.generateToken(userDetails);
 
         return ResponseEntity.ok(
