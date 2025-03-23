@@ -34,6 +34,7 @@ public class SecurityConfig {
                                 // will give error only, /domain mentioned in application.properties
                                 .requestMatchers("/user/**").hasRole("ADMIN")
                                 .requestMatchers("/auth/**").permitAll()
+                                .requestMatchers("/oauth/**").permitAll()
                                 .anyRequest().authenticated()
                 )
                 .csrf(AbstractHttpConfigurer::disable)
