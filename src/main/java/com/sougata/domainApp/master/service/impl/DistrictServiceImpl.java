@@ -94,7 +94,9 @@ public class DistrictServiceImpl implements DistrictService {
     public DistrictDto update(DistrictDto districtDto) {
         // get the existing district
         Optional<DistrictEntity> dbDistEntity = districtRepository.findById(districtDto.distId());
-        if (dbDistEntity.isEmpty()) return null;
+        if (dbDistEntity.isEmpty()) {
+            throw new RuntimeException("District not found!");
+        }
 
         // updating the fields not the related entities
         if (districtDto.strDistName() != null) {
@@ -137,8 +139,12 @@ public class DistrictServiceImpl implements DistrictService {
         for (CityEntity cityEntity : dbCityList) {
             if (map.containsKey(cityEntity.getCityId())) {
                 DistrictDto.CityDto cityDto = map.get(cityEntity.getCityId());
-                cityEntity.setStrCityName(cityDto.strCityName());
-                cityEntity.setIsActive(cityDto.isActive());
+                if (cityDto.strCityName() != null) {
+                    cityEntity.setStrCityName(cityDto.strCityName());
+                }
+                if (cityDto.isActive() != null) {
+                    cityEntity.setIsActive(cityDto.isActive());
+                }
             } else {
                 cityService.deleteCity(cityEntity.getCityId());
             }
@@ -157,7 +163,9 @@ public class DistrictServiceImpl implements DistrictService {
     @Transactional
     public DistrictDto delete(DistrictDto district) {
         Optional<DistrictEntity> entity = districtRepository.findById(district.distId());
-        if (entity.isEmpty()) return null;
+        if (entity.isEmpty()) {
+            throw new RuntimeException("District with id " + district.distId() + " not found");
+        }
         entity.get().setIsActive(0);
         DistrictEntity saved = districtRepository.save(entity.get());
         return DistrictMapper.toDto(saved);
