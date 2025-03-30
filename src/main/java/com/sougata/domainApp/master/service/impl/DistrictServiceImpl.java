@@ -9,6 +9,7 @@ import com.sougata.domainApp.master.repository.CityRepository;
 import com.sougata.domainApp.master.repository.DistrictRepository;
 import com.sougata.domainApp.master.service.CityService;
 import com.sougata.domainApp.master.service.DistrictService;
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +22,7 @@ public class DistrictServiceImpl implements DistrictService {
     private final DistrictRepository districtRepository;
     private final CityRepository cityRepository;
     private final CityService cityService;
+    private final EntityManager entityManager;
 
     @Override
     public List<DistrictDto> findAllDistrictsWithCity() {
@@ -109,6 +111,11 @@ public class DistrictServiceImpl implements DistrictService {
 
         // save the district
         DistrictEntity savedDistrict = districtRepository.save(dbDistEntity.get());
+
+        // clear the persistence cache for getting the updated district entity
+        // not the cached one.
+        entityManager.flush();
+        entityManager.clear();
 
         return DistrictMapper.toDto(savedDistrict);
     }
