@@ -37,6 +37,7 @@ public class SecurityConfig {
                                 .requestMatchers("/oauth/**").permitAll()
                                 .requestMatchers("/country/**").permitAll()
                                 .requestMatchers("/state/**").permitAll()
+                                .requestMatchers("/district/**").permitAll()
                                 .anyRequest().authenticated()
                 )
                 .csrf(AbstractHttpConfigurer::disable)
