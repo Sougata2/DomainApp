@@ -1,14 +1,16 @@
 package com.sougata.domainApp.master.service.impl;
 
 import com.sougata.domainApp.master.dto.DistrictDto;
+import com.sougata.domainApp.master.dto.MasterDTO;
 import com.sougata.domainApp.master.entity.CityEntity;
 import com.sougata.domainApp.master.entity.DistrictEntity;
-import com.sougata.domainApp.master.mapper.CityMapper;
+import com.sougata.domainApp.master.entity.MasterEntity;
 import com.sougata.domainApp.master.mapper.DistrictMapper;
 import com.sougata.domainApp.master.repository.CityRepository;
 import com.sougata.domainApp.master.repository.DistrictRepository;
 import com.sougata.domainApp.master.service.CityService;
 import com.sougata.domainApp.master.service.DistrictService;
+import com.sougata.domainApp.shared.Mapper;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,6 +25,11 @@ public class DistrictServiceImpl implements DistrictService {
     private final CityRepository cityRepository;
     private final CityService cityService;
     private final EntityManager entityManager;
+
+    private final Map<Class<? extends MasterDTO>, Class<? extends MasterEntity>> relationMap = Map.ofEntries(
+            Map.entry(DistrictDto.class, DistrictEntity.class),
+            Map.entry(DistrictDto.CityDto.class, CityEntity.class)
+    );
 
     @Override
     public List<DistrictDto> findAllDistrictsWithCity() {
@@ -44,22 +51,29 @@ public class DistrictServiceImpl implements DistrictService {
     @Override
     @Transactional
     public DistrictDto create(DistrictDto districtDto) {
-        DistrictEntity districtEntity = DistrictMapper.toEntity(districtDto, null);
+//        DistrictEntity districtEntity = DistrictMapper.toEntity(districtDto, null);
+//
+//        // Save district first
+//        DistrictEntity savedDistrict = districtRepository.save(districtEntity);
+//
+//        // Save cities and associate with the saved district
+//        List<CityEntity> cities = districtDto.cities().stream()
+//                .map(cityDto -> {
+//                    CityEntity city = CityMapper.toEntity(cityDto, savedDistrict);
+//                    return cityRepository.save(city);
+//                })
+//                .toList();
+//
+//        savedDistrict.setCities(cities);
 
-        // Save district first
-        DistrictEntity savedDistrict = districtRepository.save(districtEntity);
+        // NEW CODE
+        DistrictEntity entity = Mapper.mapToEntity(districtDto, DistrictEntity.class, relationMap);
 
-        // Save cities and associate with the saved district
-        List<CityEntity> cities = districtDto.cities().stream()
-                .map(cityDto -> {
-                    CityEntity city = CityMapper.toEntity(cityDto, savedDistrict);
-                    return cityRepository.save(city);
-                })
-                .toList();
+        // saving the related entities.
+        cityRepository.saveAll(entity.getCities());
+        DistrictEntity saved = districtRepository.save(entity);
 
-        savedDistrict.setCities(cities);
-
-        return DistrictMapper.toDto(savedDistrict);
+        return DistrictMapper.toDto(saved);
     }
 
     /**
@@ -98,21 +112,16 @@ public class DistrictServiceImpl implements DistrictService {
             throw new RuntimeException("District not found!");
         }
 
-        // updating the fields not the related entities
-        if (districtDto.strDistName() != null) {
-            dbDistEntity.get().setStrDistName(districtDto.strDistName());
-        }
-        if (districtDto.isActive() != null) {
-            dbDistEntity.get().setIsActive(districtDto.isActive());
-        }
+        Collection<DistrictDto.CityDto> dtoCities = districtDto.cities();
+        Collection<CityEntity> entityCities = dbDistEntity.get().getCities();
 
-        // update the cities
-        if (districtDto.cities() != null) {
-            mergeCityList(districtDto.cities(), dbDistEntity.get().getCities(), dbDistEntity.get());
-        }
+        DistrictEntity mergedDistrictEntity = Mapper.merge(districtDto, dbDistEntity.get(), (dto, entity) -> {
+            // merge logic for one relation.
+            return mergeCityList(dtoCities, entityCities, dbDistEntity.get());
+        });
 
         // save the district
-        DistrictEntity savedDistrict = districtRepository.save(dbDistEntity.get());
+        DistrictEntity savedDistrict = districtRepository.save(mergedDistrictEntity);
 
         // clear the persistence cache for getting the updated district entity
         // not the cached one.
@@ -122,21 +131,21 @@ public class DistrictServiceImpl implements DistrictService {
         return DistrictMapper.toDto(savedDistrict);
     }
 
-    protected void mergeCityList(List<DistrictDto.CityDto> cityDtoList, List<CityEntity> dbCityList, DistrictEntity district) {
-        // map for faster look up
+    // special function to merge city relation list.
+    private List<CityEntity> mergeCityList(Collection<DistrictDto.CityDto> dtoCities, Collection<CityEntity> entityCities, DistrictEntity districtEntity) {
         Map<UUID, DistrictDto.CityDto> map = new HashMap<>();
-        for (DistrictDto.CityDto cityDto : cityDtoList) {
+        List<CityEntity> updatedEntityCities = new ArrayList<>();
+        for (DistrictDto.CityDto cityDto : dtoCities) {
             if (cityDto.cityId() == null) {
-                // create city if not present
-                DistrictDto.CityDto createdCityDto = cityService.createCity(cityDto, district);
-                addCity(createdCityDto, dbCityList, district);
-                map.put(createdCityDto.cityId(), createdCityDto);
+                cityDto = cityService.createCity(cityDto, districtEntity);
+                map.put(cityDto.cityId(), cityDto);
             } else {
                 map.put(cityDto.cityId(), cityDto);
             }
+            updatedEntityCities.add(Mapper.mapToEntity(cityDto, CityEntity.class, relationMap));
         }
 
-        for (CityEntity cityEntity : dbCityList) {
+        for (CityEntity cityEntity : entityCities) {
             if (map.containsKey(cityEntity.getCityId())) {
                 DistrictDto.CityDto cityDto = map.get(cityEntity.getCityId());
                 if (cityDto.strCityName() != null) {
@@ -148,15 +157,9 @@ public class DistrictServiceImpl implements DistrictService {
             } else {
                 cityService.deleteCity(cityEntity.getCityId());
             }
+            updatedEntityCities.add(cityEntity);
         }
-
-        // set the updated list to the district entity
-        district.setCities(dbCityList);
-    }
-
-    private void addCity(DistrictDto.CityDto cityDto, List<CityEntity> dbCityList, DistrictEntity district) {
-        CityEntity entity = CityMapper.toEntity(cityDto, district);
-        dbCityList.add(entity);
+        return updatedEntityCities;
     }
 
     @Override

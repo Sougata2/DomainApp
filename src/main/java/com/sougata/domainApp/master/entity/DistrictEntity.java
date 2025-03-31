@@ -14,7 +14,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "districts")
-public class DistrictEntity {
+public class DistrictEntity implements MasterEntity {
     @Id
     @Column
     @GeneratedValue(strategy = GenerationType.UUID)

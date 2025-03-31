@@ -2,9 +2,6 @@ package com.sougata.domainApp.master.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.Filter;
-import org.hibernate.annotations.FilterDef;
-import org.hibernate.annotations.ParamDef;
 
 import java.util.UUID;
 
@@ -15,7 +12,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "cities")
-public class CityEntity {
+public class CityEntity implements MasterEntity {
     @Id
     @Column
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -42,6 +39,7 @@ public class CityEntity {
                 "cityId=" + cityId +
                 ", strCityName='" + strCityName + '\'' +
                 ", isActive=" + isActive +
+                ", district=" + district.getStrDistName() +
                 '}';
     }
 }

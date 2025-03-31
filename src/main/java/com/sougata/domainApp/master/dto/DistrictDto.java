@@ -11,11 +11,11 @@ import java.util.UUID;
  */
 @Builder
 public record DistrictDto(UUID distId, String strDistName, Integer isActive,
-                          List<CityDto> cities) implements Serializable {
+                          List<CityDto> cities) implements Serializable, MasterDTO {
     /**
      * DTO for {@link com.sougata.domainApp.master.entity.CityEntity}
      */
     @Builder
-    public record CityDto(UUID cityId, String strCityName, Integer isActive) implements Serializable {
+    public record CityDto(UUID cityId, String strCityName, Integer isActive) implements Serializable, MasterDTO {
     }
 }
