@@ -4,4 +4,6 @@ import com.sougata.domainApp.email.dto.EmailDto;
 
 public interface EmailService {
     void sendMail(EmailDto emailDto);
+
+    void sendMailHtml(EmailDto emailDto);
 }

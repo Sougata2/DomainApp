@@ -23,4 +23,14 @@ public class EmailController {
         }
     }
 
+    @PostMapping("/send-html")
+    public ResponseEntity<EmailDto> sendHtmlEmail(@RequestBody EmailDto emailDto) {
+        try {
+            service.sendMailHtml(emailDto);
+            return ResponseEntity.ok(emailDto);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }
