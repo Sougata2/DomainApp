@@ -1,47 +1,54 @@
 package com.sougata.domainApp.master.entity;
 
+import com.sougata.domainApp.shared.MasterEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.ArrayList;
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
 
 @Entity
 @Getter
 @Setter
-@Builder
+@Table(name = "districts")
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "districts")
+@ToString
 public class DistrictEntity implements MasterEntity {
+
     @Id
-    @Column
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID distId;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
 
     @Column
-    private String strDistName;
+    private String distName;
 
     @Column
-    private Integer isActive;
+    private Integer isValid;
 
-    @OneToMany(mappedBy = "district", fetch = FetchType.LAZY)
-    private List<CityEntity> cities = new ArrayList<>();
+    @Column
+    private LocalDateTime logDate;
 
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "district")
+    private List<CityEntity> cities;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "state_id")
+    private StateEntity state;
 
     @PrePersist
     protected void onCreate() {
-        isActive = 1;
+        isValid = 1;
+        logDate = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        logDate = LocalDateTime.now();
     }
 
     @Override
-    public String toString() {
-        return "DistrictEntity{" +
-                "distId=" + distId +
-                ", strDistName='" + strDistName + '\'' +
-                ", isActive=" + isActive +
-                ", cities=" + cities +
-                '}';
+    public Long getId() {
+        return id;
     }
 }

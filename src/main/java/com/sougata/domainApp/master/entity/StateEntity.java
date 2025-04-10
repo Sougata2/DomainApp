@@ -1,11 +1,11 @@
 package com.sougata.domainApp.master.entity;
 
+import com.sougata.domainApp.shared.MasterEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
-
+import java.util.List;
 
 @Entity
 @Getter
@@ -13,31 +13,37 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "states")
-public class StateEntity {
+public class StateEntity implements MasterEntity {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @Column
     private String stateName;
 
     @Column
-    private Integer isActive;
-
-    @Column(updatable = false)
-    private LocalDateTime createdAt;
+    private Integer isValid;
 
     @Column
-    private LocalDateTime updatedAt;
+    private LocalDateTime logDate;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "state")
+    private List<DistrictEntity> districts;
 
     @PrePersist
     protected void onCreate() {
-        createdAt = LocalDateTime.now();
-        isActive = 1;
+        isValid = 1;
+        logDate = LocalDateTime.now();
     }
 
     @PreUpdate
     protected void onUpdate() {
-        updatedAt = LocalDateTime.now();
+        logDate = LocalDateTime.now();
+    }
+
+    @Override
+    public Long getId() {
+        return id;
     }
 }

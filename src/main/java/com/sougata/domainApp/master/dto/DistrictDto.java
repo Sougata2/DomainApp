@@ -1,21 +1,27 @@
 package com.sougata.domainApp.master.dto;
 
-import lombok.Builder;
+import com.sougata.domainApp.master.entity.CityEntity;
+import com.sougata.domainApp.master.entity.StateEntity;
+import com.sougata.domainApp.shared.MasterDto;
+import lombok.*;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * DTO for {@link com.sougata.domainApp.master.entity.DistrictEntity}
  */
-@Builder
-public record DistrictDto(UUID distId, String strDistName, Integer isActive,
-                          List<CityDto> cities) implements Serializable, MasterDTO {
-    /**
-     * DTO for {@link com.sougata.domainApp.master.entity.CityEntity}
-     */
-    @Builder
-    public record CityDto(UUID cityId, String strCityName, Integer isActive) implements Serializable, MasterDTO {
-    }
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
+public class DistrictDto implements Serializable, MasterDto {
+    private Long id;
+    private String distName;
+    private Integer isValid;
+    private LocalDateTime logDate;
+    private List<CityDto> cities;
+    private StateEntity state;
 }

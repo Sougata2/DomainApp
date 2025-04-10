@@ -1,16 +1,11 @@
 package com.sougata.domainApp.master.service;
 
-import com.sougata.domainApp.master.dto.DistrictDto;
-import com.sougata.domainApp.master.entity.DistrictEntity;
+import com.sougata.domainApp.master.dto.CityDto;
 
-import java.util.UUID;
+import java.util.List;
 
 public interface CityService {
-    DistrictDto.CityDto createCity(DistrictDto.CityDto dto, DistrictEntity district);
+    List<CityDto> findAllActiveCities();
 
-    DistrictDto.CityDto getCityById(UUID id);
-
-    DistrictDto.CityDto updateCity(DistrictDto.CityDto dto);
-
-    DistrictDto.CityDto deleteCity(UUID id);
+    CityDto createCity(CityDto city);
 }

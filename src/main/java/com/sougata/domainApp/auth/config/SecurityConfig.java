@@ -38,6 +38,7 @@ public class SecurityConfig {
                                 .requestMatchers("/country/**").permitAll()
                                 .requestMatchers("/state/**").permitAll()
                                 .requestMatchers("/district/**").permitAll()
+                                .requestMatchers("/city/**").permitAll()
                                 .requestMatchers("/mail/**").permitAll()
                                 .anyRequest().authenticated()
                 )
