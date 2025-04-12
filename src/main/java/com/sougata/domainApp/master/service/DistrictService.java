@@ -8,6 +8,8 @@ public interface DistrictService {
     List<DistrictDto> findAllActiveDistricts();
 
     DistrictDto createDistrict(DistrictDto dto);
-    
+
     List<DistrictDto> findAllMappedDistricts();
+
+    DistrictDto findDistrictById(Long id);
 }

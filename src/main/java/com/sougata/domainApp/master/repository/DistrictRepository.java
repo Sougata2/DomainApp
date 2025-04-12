@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface DistrictRepository extends JpaRepository<DistrictEntity, Long> {
@@ -18,4 +19,8 @@ public interface DistrictRepository extends JpaRepository<DistrictEntity, Long> 
             "join fetch de.cities ce " +
             "where de.isValid = 1 and ce.isValid = 1")
     List<DistrictEntity> findMappedDistricts();
+
+    @Query("select de from DistrictEntity de " +
+            "where de.id = :id and de.isValid = 1")
+    Optional<DistrictEntity> findDistrictById(Long id);
 }

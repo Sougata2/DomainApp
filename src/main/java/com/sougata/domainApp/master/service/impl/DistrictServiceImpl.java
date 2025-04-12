@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -42,5 +43,14 @@ public class DistrictServiceImpl implements DistrictService {
                         (DistrictDto) RelationMapper.mapToDto(e, entityDtoMapping.getEntityDtoMap())
                 )
                 .toList();
+    }
+
+    @Override
+    public DistrictDto findDistrictById(Long id) {
+        Optional<DistrictEntity> found = repository.findDistrictById(id);
+        return found.map(
+                        e -> (DistrictDto) RelationMapper.mapToDto(e, entityDtoMapping.getEntityDtoMap())
+                )
+                .orElse(null);
     }
 }
