@@ -1,7 +1,5 @@
 package com.sougata.domainApp.master.dto;
 
-import com.sougata.domainApp.master.entity.CityEntity;
-import com.sougata.domainApp.master.entity.StateEntity;
 import com.sougata.domainApp.shared.MasterDto;
 import lombok.*;
 
