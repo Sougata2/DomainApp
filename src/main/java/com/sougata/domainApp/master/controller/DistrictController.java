@@ -26,6 +26,15 @@ public class DistrictController {
         }
     }
 
+    @GetMapping("/mapped")
+    public ResponseEntity<List<DistrictDto>> getMappedDistricts() {
+        try {
+            return ResponseEntity.ok(service.findAllMappedDistricts());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     @PostMapping
     public ResponseEntity<DistrictDto> createDistrict(@RequestBody DistrictDto dto) {
         try {

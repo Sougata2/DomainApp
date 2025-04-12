@@ -13,4 +13,9 @@ public interface DistrictRepository extends JpaRepository<DistrictEntity, Long> 
             "left join fetch de.cities ce " +
             "where de.isValid = 1")
     List<DistrictEntity> findAllActiveDistricts();
+
+    @Query("select de from DistrictEntity de " +
+            "join fetch de.cities ce " +
+            "where de.isValid = 1 and ce.isValid = 1")
+    List<DistrictEntity> findMappedDistricts();
 }

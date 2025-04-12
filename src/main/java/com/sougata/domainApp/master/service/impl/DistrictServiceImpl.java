@@ -34,4 +34,13 @@ public class DistrictServiceImpl implements DistrictService {
         DistrictEntity savedEntity = repository.save(entity);
         return (DistrictDto) RelationMapper.mapToDto(savedEntity, entityDtoMapping.getEntityDtoMap());
     }
+
+    @Override
+    public List<DistrictDto> findAllMappedDistricts() {
+        return repository.findMappedDistricts().stream()
+                .map(e ->
+                        (DistrictDto) RelationMapper.mapToDto(e, entityDtoMapping.getEntityDtoMap())
+                )
+                .toList();
+    }
 }
