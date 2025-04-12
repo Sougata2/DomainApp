@@ -125,7 +125,8 @@ public class RelationMapper {
                     } else if (isComplexType(df)) {
                         // set the parent object in the child v.
                         if (u.parent != null && u.parent.getClass().isAssignableFrom(vfield.getType())) {
-                            vfield.set(v, u.parent);
+                            // removing this because assigning the parent will cause stack overflow error
+                            //vfield.set(v, u.parent);
                         }
                     } else {
                         Object uValue = df.get(u.child);

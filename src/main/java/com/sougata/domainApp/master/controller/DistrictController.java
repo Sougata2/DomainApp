@@ -3,6 +3,8 @@ package com.sougata.domainApp.master.controller;
 import com.sougata.domainApp.master.dto.DistrictDto;
 import com.sougata.domainApp.master.service.DistrictService;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,6 +14,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/district")
 public class DistrictController {
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
     private final DistrictService service;
 
     @GetMapping
@@ -28,6 +31,17 @@ public class DistrictController {
         try {
             return ResponseEntity.ok(service.createDistrict(dto));
         } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @PostMapping("/map")
+    public ResponseEntity<DistrictDto> mapDistrict(@RequestBody DistrictDto dto) {
+        logger.info("mapDistrict : {}", dto);
+        try {
+            return ResponseEntity.ok(service.createDistrict(dto));
+        } catch (Exception e) {
+            logger.error("mapDistrict : {}", e.getMessage());
             throw new RuntimeException(e);
         }
     }

@@ -23,5 +23,5 @@ public class DistrictDto implements Serializable, MasterDto {
     private Integer isValid;
     private LocalDateTime logDate;
     private List<CityDto> cities;
-    private StateEntity state;
+    private StateDto state;
 }

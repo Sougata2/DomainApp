@@ -20,5 +20,5 @@ public class CityDto implements Serializable, MasterDto {
     private String cityName;
     private Integer isValid;
     private LocalDateTime logDate;
-    private DistrictEntity district;
+    private DistrictDto district;
 }
