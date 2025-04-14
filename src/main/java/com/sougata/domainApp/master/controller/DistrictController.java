@@ -54,4 +54,14 @@ public class DistrictController {
             throw new RuntimeException(e);
         }
     }
+
+    @PostMapping("/update")
+    public ResponseEntity<DistrictDto> updateDistrict(@RequestBody DistrictDto dto) {
+        logger.info("updateDistrict : {}", dto);
+        try {
+            return ResponseEntity.ok(service.updateDistrict(dto));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

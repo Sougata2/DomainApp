@@ -162,9 +162,9 @@ public class RelationMapper {
     }
 
 
-    public static void merge(MasterEntity og, MasterEntity nu) {
+    public static MasterEntity merge(MasterEntity og, MasterEntity nu) {
         if (nu == null) {
-            return;
+            return og;
         }
         try {
 
@@ -252,6 +252,7 @@ public class RelationMapper {
                     }
                 }
             }
+            return og;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

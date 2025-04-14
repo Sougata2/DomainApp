@@ -12,4 +12,6 @@ public interface DistrictService {
     List<DistrictDto> findAllMappedDistricts();
 
     DistrictDto findDistrictById(Long id);
+
+    DistrictDto updateDistrict(DistrictDto dto);
 }

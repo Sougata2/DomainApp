@@ -53,4 +53,14 @@ public class DistrictServiceImpl implements DistrictService {
                 )
                 .orElse(null);
     }
+
+    @Override
+    public DistrictDto updateDistrict(DistrictDto dto) {
+        Optional<DistrictEntity> dbEntity = repository.findDistrictById(dto.getId());
+        if (dbEntity.isEmpty()) return null;
+        DistrictEntity nuEntity = (DistrictEntity) RelationMapper.mapToEntity(dto, entityDtoMapping.getDtoEntityMap());
+        DistrictEntity merged = (DistrictEntity) RelationMapper.merge(dbEntity.get(), nuEntity);
+        DistrictEntity updated = repository.save(merged);
+        return (DistrictDto) RelationMapper.mapToDto(updated, entityDtoMapping.getEntityDtoMap());
+    }
 }
