@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface MenuItemService {
     List<MenuItemDto> getActiveMenuItems();
+
+    MenuItemDto createMenuItem(MenuItemDto dto);
 }

@@ -1,13 +1,12 @@
 package com.sougata.domainApp.menu.dto;
 
-import com.sougata.domainApp.menu.entity.MenuItemEntity;
 import com.sougata.domainApp.menu.entity.MenuSubItemEntity;
+import com.sougata.domainApp.shared.MasterDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -18,7 +17,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class MenuSubItemEntityDto implements Serializable {
+public class MenuSubItemDto implements MasterDto {
     private Long id;
     private String menuSubItemName;
     private Integer isValid;
