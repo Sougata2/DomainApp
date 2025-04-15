@@ -1,5 +1,6 @@
 package com.sougata.domainApp.menu.entity;
 
+import com.sougata.domainApp.shared.MasterEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -15,7 +16,7 @@ import java.util.List;
 @Table(name = "menu_items")
 @AllArgsConstructor
 @NoArgsConstructor
-public class MenuItemEntity {
+public class MenuItemEntity implements MasterEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
