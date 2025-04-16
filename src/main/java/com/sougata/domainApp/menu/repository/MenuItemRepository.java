@@ -11,7 +11,7 @@ import java.util.List;
 public interface MenuItemRepository extends JpaRepository<MenuItemEntity, Long> {
 
     @Query("select mi from MenuItemEntity mi " +
-            "left join mi.subItems " +
+            "left join mi.menuItems " +
             "where mi.isValid = 1")
     List<MenuItemEntity> findActiveMenuItems();
 }

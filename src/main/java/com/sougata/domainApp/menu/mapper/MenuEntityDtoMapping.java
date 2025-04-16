@@ -2,9 +2,7 @@ package com.sougata.domainApp.menu.mapper;
 
 
 import com.sougata.domainApp.menu.dto.MenuItemDto;
-import com.sougata.domainApp.menu.dto.MenuSubItemDto;
 import com.sougata.domainApp.menu.entity.MenuItemEntity;
-import com.sougata.domainApp.menu.entity.MenuSubItemEntity;
 import com.sougata.domainApp.shared.MasterDto;
 import com.sougata.domainApp.shared.MasterEntity;
 import lombok.Getter;
@@ -20,13 +18,11 @@ public class MenuEntityDtoMapping {
 
     public MenuEntityDtoMapping() {
         entityDtoMap = Map.ofEntries(
-                Map.entry(MenuItemEntity.class, MenuItemDto.class),
-                Map.entry(MenuSubItemEntity.class, MenuSubItemDto.class)
+                Map.entry(MenuItemEntity.class, MenuItemDto.class)
         );
 
         dtoEntityMap = Map.ofEntries(
-                Map.entry(MenuItemDto.class, MenuItemEntity.class),
-                Map.entry(MenuSubItemDto.class, MenuSubItemEntity.class)
+                Map.entry(MenuItemDto.class, MenuItemEntity.class)
         );
     }
 
