@@ -19,6 +19,7 @@ import java.util.List;
 public class MenuItemDto implements MasterDto {
     private Long id;
     private String menuItemName;
+    private String pageLink;
     private Integer isValid;
     private LocalDateTime logDate;
     private List<MenuItemDto> menuItems;

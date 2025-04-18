@@ -25,6 +25,9 @@ public class MenuItemEntity implements MasterEntity {
     private String menuItemName;
 
     @Column
+    private String pageLink;
+
+    @Column
     private Integer isValid;
 
     @Column
