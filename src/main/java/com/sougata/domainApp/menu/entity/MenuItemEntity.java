@@ -33,9 +33,12 @@ public class MenuItemEntity implements MasterEntity {
     @Column
     private LocalDateTime logDate;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "menu_item_id")
+    @OneToMany(mappedBy = "menuItem", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<MenuItemEntity> menuItems;
+
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "menu_item_id")
+    private MenuItemEntity menuItem;
 
     @PrePersist
     protected void onCreate() {

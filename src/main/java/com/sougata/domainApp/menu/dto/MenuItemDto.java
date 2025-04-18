@@ -1,10 +1,8 @@
 package com.sougata.domainApp.menu.dto;
 
-import com.sougata.domainApp.menu.entity.MenuItemEntity;
 import com.sougata.domainApp.shared.MasterDto;
 import lombok.*;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -23,4 +21,5 @@ public class MenuItemDto implements MasterDto {
     private Integer isValid;
     private LocalDateTime logDate;
     private List<MenuItemDto> menuItems;
+    private MenuItemDto menuItem;
 }
