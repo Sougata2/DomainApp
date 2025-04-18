@@ -38,4 +38,15 @@ public class MenuItemController {
             throw new RuntimeException(e);
         }
     }
+
+    @PutMapping
+    public ResponseEntity<MenuItemDto> updateMenuItem(@RequestBody MenuItemDto dto) {
+        logger.info("updateMenuItem : {}", dto);
+        try {
+            MenuItemDto updated = service.updateMenuItem(dto);
+            return ResponseEntity.ok(updated);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
