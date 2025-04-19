@@ -28,6 +28,17 @@ public class MenuItemController {
         }
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<MenuItemDto> getMenuItemById(@PathVariable Long id) {
+        logger.info("getMenuItemById id : {}", id);
+        try {
+            MenuItemDto menuItemDto = service.getMenuItemById(id);
+            return ResponseEntity.ok(menuItemDto);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     @GetMapping("/all")
     public ResponseEntity<List<MenuItemDto>> getAllActiveMenuItemsOrSubMenuItems() {
         logger.info("getAllActiveMenuItemsOrSubMenuItems");

@@ -36,6 +36,17 @@ public class MenuItemServiceImpl implements MenuItemService {
     }
 
     @Override
+    public MenuItemDto getMenuItemById(Long id) {
+        Optional<MenuItemEntity> entity = repository.findById(id);
+        return entity
+                .map(
+                        menuItemEntity ->
+                                (MenuItemDto) RelationMapper.mapToDto(menuItemEntity, entityDtoMapping.getEntityDtoMap())
+                )
+                .orElse(null);
+    }
+
+    @Override
     public MenuItemDto createMenuItem(MenuItemDto dto) {
         MenuItemEntity entity = (MenuItemEntity) RelationMapper.mapToEntity(dto, entityDtoMapping.getDtoEntityMap());
         MenuItemEntity saved = repository.save(entity);

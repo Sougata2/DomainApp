@@ -10,6 +10,8 @@ public interface MenuItemService {
 
     List<MenuItemDto> getAllActiveMenuItemsOrSubMenuItems();
 
+    MenuItemDto getMenuItemById(Long id);
+
     MenuItemDto createMenuItem(MenuItemDto dto);
 
     MenuItemDto updateMenuItem(MenuItemDto dto);
