@@ -28,6 +28,17 @@ public class MenuItemController {
         }
     }
 
+    @GetMapping("/all")
+    public ResponseEntity<List<MenuItemDto>> getAllActiveMenuItemsOrSubMenuItems() {
+        logger.info("getAllActiveMenuItemsOrSubMenuItems");
+        try {
+            List<MenuItemDto> menuItems = service.getAllActiveMenuItemsOrSubMenuItems();
+            return ResponseEntity.ok(menuItems);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     @PostMapping
     public ResponseEntity<MenuItemDto> createMenuItem(@RequestBody MenuItemDto dto) {
         logger.info("createMenuItem : {}", dto);

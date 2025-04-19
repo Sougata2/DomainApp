@@ -8,6 +8,8 @@ import java.util.List;
 public interface MenuItemService {
     List<MenuItemDto> getActiveMenuItems();
 
+    List<MenuItemDto> getAllActiveMenuItemsOrSubMenuItems();
+
     MenuItemDto createMenuItem(MenuItemDto dto);
 
     MenuItemDto updateMenuItem(MenuItemDto dto);
