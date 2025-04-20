@@ -27,7 +27,7 @@ public class MenuItemServiceImpl implements MenuItemService {
 
     @Override
     public List<MenuItemDto> getAllActiveMenuItemsOrSubMenuItems() {
-        return repository.findAll()
+        return repository.findAllActiveMenuOrSubMenu()
                 .stream()
                 .map(e ->
                         (MenuItemDto) RelationMapper
