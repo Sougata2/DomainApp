@@ -14,7 +14,7 @@ public class RelationMapper {
 
     public static MasterEntity mapToEntity(MasterDto dto, Map<Class<? extends MasterDto>, Class<? extends MasterEntity>> dtoEntityMap) {
         try {
-            // no adj required as the entity already have the node.
+            // no adj required as the entity already has the node.
             Queue<ChildParentPair<MasterDto, MasterEntity>> queue = new LinkedList<>();
             Set<Integer> visited = new HashSet<>();
             visited.add(dto.hashCode());
@@ -24,7 +24,6 @@ public class RelationMapper {
 
             while (!queue.isEmpty()) {
                 ChildParentPair<MasterDto, MasterEntity> u = queue.poll();
-                System.out.println(u.child);
                 Class<? extends MasterEntity> entityClass = dtoEntityMap.get(u.child.getClass());
                 MasterEntity v = entityClass.getDeclaredConstructor().newInstance();
 
@@ -46,7 +45,11 @@ public class RelationMapper {
                                 }
                             }
                         }
-                        vfield.set(v, new ArrayList<MasterEntity>());
+                        if (Set.class.isAssignableFrom(df.getType())) {
+                            vfield.set(v, new HashSet<>());
+                        } else {
+                            vfield.set(v, new ArrayList<MasterEntity>());
+                        }
                     } else if (isComplexType(df)) {
                         // set the parent object in the child v.
                         if (u.parent != null && u.parent.getClass().isAssignableFrom(vfield.getType())) {
@@ -121,7 +124,11 @@ public class RelationMapper {
                                 }
                             }
                         }
-                        vfield.set(v, new ArrayList<MasterEntity>());
+                        if (Set.class.isAssignableFrom(df.getType())) {
+                            vfield.set(v, new HashSet<>());
+                        } else {
+                            vfield.set(v, new ArrayList<MasterEntity>());
+                        }
                     } else if (isComplexType(df)) {
                         // set the parent object in the child v.
                         if (u.parent != null && u.parent.getClass().isAssignableFrom(vfield.getType())) {
