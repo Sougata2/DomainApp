@@ -41,6 +41,8 @@ public class SecurityConfig {
                                 .requestMatchers("/city/**").permitAll()
                                 .requestMatchers("/mail/**").permitAll()
                                 .requestMatchers("/menu-item/**").permitAll()
+                                .requestMatchers("/employee/**").permitAll()
+                                .requestMatchers("/role/**").permitAll()
                                 .anyRequest().authenticated()
                 )
                 .csrf(AbstractHttpConfigurer::disable)
