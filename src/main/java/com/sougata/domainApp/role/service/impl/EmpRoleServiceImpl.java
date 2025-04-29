@@ -45,4 +45,14 @@ public class EmpRoleServiceImpl implements EmpRoleService {
         RoleEntity saved = repository.save(merged);
         return (RoleDto) RelationMapper.mapToDto(saved, entityDtoMapping.getEntityDtoMap());
     }
+
+    @Override
+    public RoleDto getRoleById(Long id) {
+        Optional<RoleEntity> dbEntity = repository.findRoleWithEmployeeById(id);
+        return dbEntity
+                .map(
+                        roleEntity ->
+                                (RoleDto) RelationMapper.mapToDto(roleEntity, entityDtoMapping.getEntityDtoMap())
+                ).orElse(null);
+    }
 }

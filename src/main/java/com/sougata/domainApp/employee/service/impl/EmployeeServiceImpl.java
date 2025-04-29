@@ -45,4 +45,17 @@ public class EmployeeServiceImpl implements EmployeeService {
         EmployeeEntity savedEntity = repository.save(merged);
         return (EmployeeDto) RelationMapper.mapToDto(savedEntity, entityDtoMapping.getEntityDtoMap());
     }
+
+    @Override
+    public EmployeeDto getEmployeeById(Long id) {
+        Optional<EmployeeEntity> dbEntity = repository.findEmployeeWithRolesById(id);
+        if (dbEntity.isEmpty()) {
+            return null;
+        }
+        return dbEntity
+                .map(
+                        employeeEntity ->
+                                (EmployeeDto) RelationMapper.mapToDto(employeeEntity, entityDtoMapping.getEntityDtoMap())
+                ).orElse(null);
+    }
 }

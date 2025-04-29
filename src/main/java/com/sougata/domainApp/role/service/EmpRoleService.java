@@ -10,4 +10,6 @@ public interface EmpRoleService {
     List<RoleDto> getAllActiveRoles();
 
     RoleDto updateRole(RoleDto dto);
+
+    RoleDto getRoleById(Long id);
 }

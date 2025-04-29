@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface EmployeeRepository extends JpaRepository<EmployeeEntity, Long> {
@@ -14,4 +15,9 @@ public interface EmployeeRepository extends JpaRepository<EmployeeEntity, Long> 
             "left join fetch ee.roles re " +
             "where ee.isValid = 1")
     List<EmployeeEntity> getAllActiveEmployees();
+
+    @Query("select ee from EmployeeEntity ee " +
+            "left join fetch ee.roles re " +
+            "where ee.id = :id")
+    Optional<EmployeeEntity> findEmployeeWithRolesById(Long id);
 }

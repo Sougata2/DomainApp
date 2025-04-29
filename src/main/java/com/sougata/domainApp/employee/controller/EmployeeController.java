@@ -19,20 +19,35 @@ public class EmployeeController {
 
 
     @GetMapping
-    public List<EmployeeDto> getAllActiveEmployees() {
+    public ResponseEntity<List<EmployeeDto>> getAllActiveEmployees() {
         logger.info("Get all active employees");
         try {
-            return service.getAllActiveEmployees();
+            return ResponseEntity.ok(service.getAllActiveEmployees());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<EmployeeDto> getEmployeeById(@PathVariable Long id) {
+        logger.info("Get employee by id: {}", id);
+        try {
+            EmployeeDto employee = service.getEmployeeById(id);
+            if (employee == null) {
+                logger.error("Employee with id {} not found", id);
+                return ResponseEntity.notFound().build();
+            }
+            return ResponseEntity.ok(employee);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
     @PostMapping
-    public EmployeeDto createEmployee(@RequestBody EmployeeDto dto) {
+    public ResponseEntity<EmployeeDto> createEmployee(@RequestBody EmployeeDto dto) {
         logger.info("Create employee : {}", dto);
         try {
-            return service.createEmployee(dto);
+            return ResponseEntity.ok(service.createEmployee(dto));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
