@@ -41,7 +41,7 @@ public class EmpRoleServiceImpl implements EmpRoleService {
             return null;
         }
         RoleEntity nuEntity = (RoleEntity) RelationMapper.mapToEntity(dto, entityDtoMapping.getDtoEntityMap());
-        RoleEntity merged = (RoleEntity) RelationMapper.merge(dbEntity.get(), nuEntity);
+        RoleEntity merged = (RoleEntity) RelationMapper.mergeMTM(dbEntity.get(), nuEntity, 1);
         RoleEntity saved = repository.save(merged);
         return (RoleDto) RelationMapper.mapToDto(saved, entityDtoMapping.getEntityDtoMap());
     }

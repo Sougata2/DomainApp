@@ -41,7 +41,7 @@ public class EmployeeServiceImpl implements EmployeeService {
             return null;
         }
         EmployeeEntity nuEntity = (EmployeeEntity) RelationMapper.mapToEntity(dto, entityDtoMapping.getDtoEntityMap());
-        EmployeeEntity merged = (EmployeeEntity) RelationMapper.merge(dbEntity.get(), nuEntity);
+        EmployeeEntity merged = (EmployeeEntity) RelationMapper.mergeMTM(dbEntity.get(), nuEntity, 1);
         EmployeeEntity savedEntity = repository.save(merged);
         return (EmployeeDto) RelationMapper.mapToDto(savedEntity, entityDtoMapping.getEntityDtoMap());
     }

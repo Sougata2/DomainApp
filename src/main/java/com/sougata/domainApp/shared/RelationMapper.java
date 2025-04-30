@@ -12,6 +12,9 @@ public class RelationMapper {
     private record ChildParentPair<C, P>(C child, P parent) {
     }
 
+    private record ChildParentPairMTM<C, P>(C child, P parent, int level) {
+    }
+
     public static MasterEntity mapToEntity(MasterDto dto, Map<Class<? extends MasterDto>, Class<? extends MasterEntity>> dtoEntityMap) {
         try {
             // no adj required as the entity already has the node.
@@ -92,7 +95,7 @@ public class RelationMapper {
     public static MasterDto mapToDto(MasterEntity entity, Map<Class<? extends MasterEntity>, Class<? extends MasterDto>> entityDtoMap) {
         try {
 
-            // no adj required as the entity already have the node.
+            // no adj required as the entity already has the node.
             Queue<ChildParentPair<MasterEntity, MasterDto>> queue = new LinkedList<>();
             Set<Integer> visited = new HashSet<>();
             visited.add(entity.hashCode());
@@ -196,7 +199,7 @@ public class RelationMapper {
                     Field nuField = uNu.child.getClass().getDeclaredField(ogField.getName());
                     nuField.setAccessible(true);
 
-                    // if og field is list, same goes for nu field.
+                    // if og field is list, the same goes for nu field.
                     if (Collection.class.isAssignableFrom(ogField.getType())) {
                         Object valueOg = ogField.get(uOg.child);
                         Object valueNu = nuField.get(uNu.child);
@@ -219,7 +222,7 @@ public class RelationMapper {
                                         itemOgField.set(itemOg, null);
                                     }
                                 }
-                                // add the child to remove list.
+                                // add the child to removeList.
                                 itemOgRemoveList.add(itemOg);
                             } else {
                                 // traverse the bfs that are untouched.
@@ -229,7 +232,7 @@ public class RelationMapper {
                                 }
                             }
                         }
-                        // finally remove the children
+                        // finally, remove the children
                         itemOgRemoveList.forEach(listOg::remove);
 
                         for (MasterEntity itemNu : listNu) {
@@ -252,6 +255,118 @@ public class RelationMapper {
                                 }
                             }
                         }
+                    } else if (!isComplexType(ogField) && uOg.parent == null) {
+                        // update the attribute of the first parent only.
+                        Object valueNu = nuField.get(uNu.child);
+                        if (valueNu != null) ogField.set(uOg.child, valueNu);
+                    }
+                }
+            }
+            return og;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * @param MAX_LEVEL max depth level bfs will traverse
+     * @implNote when updating when
+     * parent: {
+     * ...
+     * children: [
+     * ...
+     * grandChildren:[]
+     * ]
+     * }
+     * <p>
+     * at least N level grandChildren should be passed, or else spring will think that
+     * the child does not have a child and save it as it is, leading to abandoning of grand child from child
+     * </p>
+     */
+    public static MasterEntity mergeMTM(MasterEntity og, MasterEntity nu, int MAX_LEVEL) {
+        if (nu == null) {
+            return og;
+        }
+        try {
+
+            Queue<ChildParentPairMTM<MasterEntity, MasterEntity>> queueOg = new LinkedList<>();
+            Queue<ChildParentPairMTM<MasterEntity, MasterEntity>> queueNu = new LinkedList<>();
+
+            Set<Integer> visitedOg = new HashSet<>();
+            Set<Integer> visitedNu = new HashSet<>();
+
+            queueOg.offer(new ChildParentPairMTM<>(og, null, 0));
+            queueNu.offer(new ChildParentPairMTM<>(nu, null, 0));
+
+            visitedOg.add(og.hashCode());
+            visitedNu.add(nu.hashCode());
+
+            while (!queueOg.isEmpty() && !queueNu.isEmpty()) {
+                ChildParentPairMTM<MasterEntity, MasterEntity> uOg = queueOg.poll();
+                ChildParentPairMTM<MasterEntity, MasterEntity> uNu = queueNu.poll();
+                // iterating for the children
+                for (Field ogField : uOg.child.getClass().getDeclaredFields()) {
+                    ogField.setAccessible(true);
+                    Field nuField = uNu.child.getClass().getDeclaredField(ogField.getName());
+                    nuField.setAccessible(true);
+
+                    // if og field is list, the same goes for nu field.
+                    if (Collection.class.isAssignableFrom(ogField.getType())) {
+                        Object valueOg = ogField.get(uOg.child);
+                        Object valueNu = nuField.get(uNu.child);
+
+                        Collection<MasterEntity> listOg = (Collection<MasterEntity>) valueOg;
+                        Collection<MasterEntity> listNu = (Collection<MasterEntity>) valueNu;
+
+                        Map<Long, MasterEntity> mapOg = listOg.stream().collect(Collectors.toMap(MasterEntity::getId, i -> i));
+                        Map<Long, MasterEntity> mapNu = listNu.stream().collect(Collectors.toMap(MasterEntity::getId, i -> i));
+
+                        Collection<MasterEntity> itemOgRemoveList = new ArrayList<>();
+
+                        for (MasterEntity itemOg : listOg) {
+                            // check for removal
+                            if (!mapNu.containsKey(itemOg.getId())) {
+                                for (Field itemOgField : itemOg.getClass().getDeclaredFields()) {
+                                    itemOgField.setAccessible(true);
+                                    if (isComplexType(itemOgField) && uOg.child.getClass().isAssignableFrom(itemOgField.getType())) {
+                                        // remove the child parent mapping.
+                                        itemOgField.set(itemOg, null);
+                                    }
+                                }
+                                // add the child to removeList.
+                                itemOgRemoveList.add(itemOg);
+                            } else {
+                                // traverse the bfs that are untouched.
+                                if (!visitedOg.contains(itemOg.hashCode()) && uOg.level() <= MAX_LEVEL) {
+                                    visitedOg.add(itemOg.hashCode());
+                                    queueOg.offer(new ChildParentPairMTM<>(itemOg, uOg.child, uOg.level() + 1));
+                                }
+                            }
+                        }
+                        // finally, remove the children
+                        itemOgRemoveList.forEach(listOg::remove);
+
+                        for (MasterEntity itemNu : listNu) {
+                            // check for insertion.
+                            if (itemNu.getId() == null || !mapOg.containsKey(itemNu.getId())) {
+                                for (Field itemNuField : itemNu.getClass().getDeclaredFields()) {
+                                    itemNuField.setAccessible(true);
+                                    if (isComplexType(itemNuField) && uOg.child.getClass().isAssignableFrom(itemNuField.getType())) {
+                                        // add the og parent in parent relation.
+                                        itemNuField.set(itemNu, uOg.child);
+                                    }
+                                }
+                                // set the child in the ogList
+                                listOg.add(itemNu);
+                            } else {
+                                // traverse the bfs that are untouched.
+                                if (!visitedNu.contains(itemNu.hashCode()) && uNu.level() <= MAX_LEVEL) {
+                                    visitedNu.add(itemNu.hashCode());
+                                    queueNu.offer(new ChildParentPairMTM<>(itemNu, uNu.child, uNu.level() + 1));
+                                }
+                            }
+                        }
+
                     } else if (!isComplexType(ogField) && uOg.parent == null) {
                         // update the attribute of the first parent only.
                         Object valueNu = nuField.get(uNu.child);
