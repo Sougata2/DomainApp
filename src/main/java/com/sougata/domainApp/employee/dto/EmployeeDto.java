@@ -25,6 +25,7 @@ public class EmployeeDto implements MasterDto {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private Integer isValid;
+    private RoleDto defaultRole;
     private Set<RoleDto> roles;
 
     @Override
