@@ -24,12 +24,13 @@ public class Role {
     private String name;
 
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "users_roles",
-            joinColumns = @JoinColumn(name = "role_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id")
-    )
-    private List<User> users = new ArrayList<>();
+    @JoinTable(name = "users_roles", joinColumns = @JoinColumn(name = "role_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
+    private List<User> users;
+
+    @PrePersist
+    protected void onCreate() {
+        this.users = new ArrayList<>();
+    }
 
     @Override
     public String toString() {

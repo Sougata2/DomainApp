@@ -1,16 +1,13 @@
 package com.sougata.domainApp.role.dto;
 
 import com.sougata.domainApp.employee.dto.EmployeeDto;
-import com.sougata.domainApp.employee.entity.EmployeeEntity;
 import com.sougata.domainApp.shared.MasterDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 

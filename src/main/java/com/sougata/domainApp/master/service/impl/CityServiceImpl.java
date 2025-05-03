@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -25,9 +24,7 @@ public class CityServiceImpl implements CityService {
     public List<CityDto> findAllActiveCities() {
         return repository.findAllActiveCities()
                 .stream()
-                .map(e ->
-                        (CityDto) RelationMapper.mapToDto(e, entityDtoMapping.getEntityDtoMap())
-                ).toList();
+                .map(e -> (CityDto) RelationMapper.mapToDto(e, entityDtoMapping.getEntityDtoMap())).toList();
     }
 
     @Override
@@ -40,12 +37,12 @@ public class CityServiceImpl implements CityService {
 
     @Override
     public List<CityDto> findCitiesNotMappedToDist(DistrictDto district) {
-        DistrictEntity districtEntity = (DistrictEntity) RelationMapper.mapToEntity(district, entityDtoMapping.getDtoEntityMap());
+        DistrictEntity districtEntity = (DistrictEntity) RelationMapper.mapToEntity(district,
+                entityDtoMapping.getDtoEntityMap());
         return repository.findCitiesNotMappedToDist(districtEntity).stream()
                 .map(e -> (CityDto) RelationMapper.mapToDto(e, entityDtoMapping.getEntityDtoMap()))
                 .toList();
 
     }
-
 
 }

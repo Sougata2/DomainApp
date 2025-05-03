@@ -41,12 +41,8 @@ public class User {
     private LocalDateTime updatedAt;
 
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "users_roles",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id")
-    )
-    private List<Role> roles = new ArrayList<>();
+    @JoinTable(name = "users_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private List<Role> roles;
 
     public void addRole(Role role) {
         roles.add(role);
@@ -56,6 +52,7 @@ public class User {
     protected void onCreate() {
         this.password = PasswordEncoderFactories.createDelegatingPasswordEncoder().encode(this.password);
         this.createdAt = LocalDateTime.now();
+        this.roles = new ArrayList<>();
     }
 
     @PreUpdate
@@ -65,7 +62,6 @@ public class User {
         }
         this.updatedAt = LocalDateTime.now();
     }
-
 
     @Override
     public String toString() {

@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.lang.reflect.Field;
-import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
@@ -66,25 +65,6 @@ public class UserServiceImpl implements UserService {
             throw new Exception("role " + role + " not found!");
         }
         userRepository.save(user);
-    }
-
-    private User mergeUser(User existingUser, User requestUser) {
-        if (requestUser.getFirstName() != null) {
-            existingUser.setFirstName(requestUser.getFirstName());
-        }
-        if (requestUser.getLastName() != null) {
-            existingUser.setLastName(requestUser.getLastName());
-        }
-        if (requestUser.getEmail() != null) {
-            existingUser.setEmail(requestUser.getEmail());
-        }
-        if (requestUser.getPassword() != null) {
-            existingUser.setPassword(requestUser.getPassword());
-        }
-
-        existingUser.setUpdatedAt(LocalDateTime.now()); // Update timestamp
-
-        return existingUser;
     }
 
     private User mergeUser2(User existingUser, User requestUser) throws UserMergeException {
