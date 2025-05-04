@@ -16,6 +16,9 @@ public class RelationMapper {
     }
 
     public static MasterEntity mapToEntity(MasterDto dto, Map<Class<? extends MasterDto>, Class<? extends MasterEntity>> dtoEntityMap) {
+        if (dto == null) {
+            return null;
+        }
         try {
             // no adj required as the entity already has the node.
             Queue<ChildParentPair<MasterDto, MasterEntity>> queue = new LinkedList<>();
@@ -53,12 +56,19 @@ public class RelationMapper {
                         } else {
                             vfield.set(v, new ArrayList<MasterEntity>());
                         }
-                    } else if (isComplexType(df)) {
+                    } else if (isComplexType(df) && u.parent != null) {
                         // set the parent object in the child v.
-                        if (u.parent != null && u.parent.getClass().isAssignableFrom(vfield.getType())) {
+                        if (u.parent.getClass().isAssignableFrom(vfield.getType())) {
                             vfield.set(v, u.parent);
                         }
-                    } else {
+                    } else if (isComplexType(df) && u.parent == null) {
+                        // if the first parent has @ManyToOne or @OneToOne relation, then
+                        // the relation should be treated as separate dto, and it should be mapped separately.
+                        // later attach the newly formed entity to the parent entity.
+                        MasterDto value = (MasterDto) df.get(u.child);
+                        MasterEntity childRelation = mapToEntity(value, dtoEntityMap);
+                        vfield.set(v, childRelation);
+                    } else if (!isComplexType(df)) {
                         Object uValue = df.get(u.child);
                         vfield.set(v, uValue);
                     }
@@ -93,6 +103,9 @@ public class RelationMapper {
 
 
     public static MasterDto mapToDto(MasterEntity entity, Map<Class<? extends MasterEntity>, Class<? extends MasterDto>> entityDtoMap) {
+        if (entity == null) {
+            return null;
+        }
         try {
 
             // no adj required as the entity already has the node.
@@ -132,13 +145,20 @@ public class RelationMapper {
                         } else {
                             vfield.set(v, new ArrayList<MasterEntity>());
                         }
-                    } else if (isComplexType(df)) {
+                    } else if (isComplexType(df) && u.parent != null) {
                         // set the parent object in the child v.
-                        if (u.parent != null && u.parent.getClass().isAssignableFrom(vfield.getType())) {
+                        if (u.parent.getClass().isAssignableFrom(vfield.getType())) {
                             // removing this because assigning the parent will cause stack overflow error
                             //vfield.set(v, u.parent);
                         }
-                    } else {
+                    } else if (isComplexType(df) && u.parent == null) {
+                        // if the first parent has @ManyToOne or @OneToOne relation, then
+                        // the relation should be treated as separate entity, and it should be mapped separately.
+                        // later attach the newly formed dto to the parent dto.
+                        MasterEntity value = (MasterEntity) df.get(u.child);
+                        MasterDto childRelation = mapToDto(value, entityDtoMap);
+                        vfield.set(v, childRelation);
+                    } else if (!isComplexType(df)) {
                         Object uValue = df.get(u.child);
                         vfield.set(v, uValue);
                     }
@@ -259,6 +279,12 @@ public class RelationMapper {
                         // update the attribute of the first parent only.
                         Object valueNu = nuField.get(uNu.child);
                         if (valueNu != null) ogField.set(uOg.child, valueNu);
+                    } else if (isComplexType(ogField) && uOg.parent == null) {
+                        // for entity having @ManyToOne or @OneToOne relation
+                        // don't change anything, put the new entity here.
+                        Object valueNu = nuField.get(uNu.child);
+                        if (valueNu != null)
+                            ogField.set(uOg.child, valueNu);
                     }
                 }
             }
@@ -370,7 +396,14 @@ public class RelationMapper {
                     } else if (!isComplexType(ogField) && uOg.parent == null) {
                         // update the attribute of the first parent only.
                         Object valueNu = nuField.get(uNu.child);
-                        if (valueNu != null) ogField.set(uOg.child, valueNu);
+                        if (valueNu != null)
+                            ogField.set(uOg.child, valueNu);
+                    } else if (isComplexType(ogField) && uOg.parent == null) {
+                        // for entity having @ManyToOne or @OneToOne relation
+                        // don't change anything, put the new entity here.
+                        Object valueNu = nuField.get(uNu.child);
+                        if (valueNu != null)
+                            ogField.set(uOg.child, valueNu);
                     }
                 }
             }
