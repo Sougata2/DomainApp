@@ -1,6 +1,6 @@
 package com.sougata.domainApp.role.entity;
 
-import com.sougata.domainApp.employee.entity.EmployeeEntity;
+import com.sougata.domainApp.employeeRoleMap.entity.EmployeeRoleMapEntity;
 import com.sougata.domainApp.shared.MasterEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -8,7 +8,6 @@ import lombok.*;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Entity
 @Getter
@@ -35,9 +34,14 @@ public class RoleEntity implements MasterEntity {
     private LocalDateTime updatedAt;
 
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
-    @JoinTable(name = "emp_role_map", joinColumns = @JoinColumn(name = "role_id"), inverseJoinColumns = @JoinColumn(name = "emp_id"))
-    private Set<EmployeeEntity> employees;
+    /**
+     * @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+     * @JoinTable(name = "emp_role_map", joinColumns = @JoinColumn(name = "role_id"), inverseJoinColumns = @JoinColumn(name = "emp_id"))
+     * private Set<EmployeeEntity> employees;
+     */
+
+    @OneToMany(mappedBy = "role", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Set<EmployeeRoleMapEntity> roleMappings;
 
     @PrePersist
     protected void onCreate() {
@@ -45,7 +49,7 @@ public class RoleEntity implements MasterEntity {
         createdAt = LocalDateTime.now();
         updatedAt = LocalDateTime.now();
         roleName = "ROLE_" + roleName.toUpperCase();
-        this.employees = new HashSet<>();
+        this.roleMappings = new HashSet<>();
     }
 
     @PreUpdate
@@ -58,14 +62,13 @@ public class RoleEntity implements MasterEntity {
 
     @Override
     public String toString() {
-        Set<String> employeeNames = this.employees.stream().map(EmployeeEntity::getEmail).collect(Collectors.toSet());
         return "RoleEntity{" +
                 "id=" + id +
                 ", roleName='" + roleName + '\'' +
                 ", isValid=" + isValid +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
-                ", employees=" + employeeNames +
+                ", roleMappings=" + roleMappings +
                 '}';
     }
 }

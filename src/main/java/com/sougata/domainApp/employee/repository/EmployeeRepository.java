@@ -12,12 +12,10 @@ import java.util.Optional;
 public interface EmployeeRepository extends JpaRepository<EmployeeEntity, Long> {
 
     @Query("select ee from EmployeeEntity ee " +
-            "left join fetch ee.roles re " +
             "where ee.isValid = 1")
     List<EmployeeEntity> getAllActiveEmployees();
 
     @Query("select ee from EmployeeEntity ee " +
-            "left join fetch ee.roles re " +
             "where ee.id = :id")
     Optional<EmployeeEntity> findEmployeeWithRolesById(Long id);
 }

@@ -1,5 +1,6 @@
 package com.sougata.domainApp.employee.dto;
 
+import com.sougata.domainApp.employeeRoleMap.dto.EmployeeRoleMapDto;
 import com.sougata.domainApp.role.dto.RoleDto;
 import com.sougata.domainApp.shared.MasterDto;
 import lombok.*;
@@ -25,12 +26,10 @@ public class EmployeeDto implements MasterDto {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private Integer isValid;
-    private RoleDto defaultRole;
-    private Set<RoleDto> roles;
+    private Set<EmployeeRoleMapDto> employeeMappings;
 
     @Override
     public String toString() {
-        Set<String> roleNames = roles.stream().map(RoleDto::getRoleName).collect(Collectors.toSet());
         return "EmployeeDto{" +
                 "id=" + id +
                 ", firstName='" + firstName + '\'' +
@@ -41,7 +40,7 @@ public class EmployeeDto implements MasterDto {
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
                 ", isValid=" + isValid +
-                ", roles=" + roleNames +
+                ", employeeMappings=" + employeeMappings +
                 '}';
     }
 }

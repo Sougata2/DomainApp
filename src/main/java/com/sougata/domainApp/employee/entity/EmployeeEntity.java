@@ -1,6 +1,6 @@
 package com.sougata.domainApp.employee.entity;
 
-import com.sougata.domainApp.role.entity.RoleEntity;
+import com.sougata.domainApp.employeeRoleMap.entity.EmployeeRoleMapEntity;
 import com.sougata.domainApp.shared.MasterEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -47,12 +47,15 @@ public class EmployeeEntity implements MasterEntity {
     @Column
     private Integer isValid;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private RoleEntity defaultRole;
+    /**
+     * @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+     * @JoinTable(name = "emp_role_map", joinColumns = @JoinColumn(name = "emp_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
+     * private Set<RoleEntity> roles;
+     */
 
-    @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
-    @JoinTable(name = "emp_role_map", joinColumns = @JoinColumn(name = "emp_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private Set<RoleEntity> roles;
+    @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<EmployeeRoleMapEntity> employeeMappings;
+
 
     @PrePersist
     protected void onCreate() {
@@ -61,7 +64,8 @@ public class EmployeeEntity implements MasterEntity {
         updatedAt = LocalDateTime.now();
         password = PasswordEncoderFactories.createDelegatingPasswordEncoder().encode(password);
         // initialize the relation(s)
-        this.roles = new HashSet<>();
+//        this.roles = new HashSet<>();
+        this.employeeMappings = new HashSet<>();
     }
 
     @PreUpdate
@@ -71,7 +75,7 @@ public class EmployeeEntity implements MasterEntity {
 
     @Override
     public String toString() {
-        Set<String> roleNames = roles.stream().map(RoleEntity::getRoleName).collect(Collectors.toSet());
+//        Set<String> roleNames = roles.stream().map(RoleEntity::getRoleName).collect(Collectors.toSet());
         return "EmployeeEntity{" +
                 "id=" + id +
                 ", firstName='" + firstName + '\'' +
@@ -82,7 +86,7 @@ public class EmployeeEntity implements MasterEntity {
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
                 ", isValid=" + isValid +
-                ", roles=" + roleNames +
+//                ", roles=" + roleNames +
                 '}';
     }
 }
