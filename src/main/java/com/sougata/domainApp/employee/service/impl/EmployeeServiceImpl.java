@@ -5,6 +5,7 @@ import com.sougata.domainApp.employee.entity.EmployeeEntity;
 import com.sougata.domainApp.employee.mapper.EmployeeEntityDtoMapping;
 import com.sougata.domainApp.employee.repository.EmployeeRepository;
 import com.sougata.domainApp.employee.service.EmployeeService;
+import com.sougata.domainApp.shared.EntityDtoMapping;
 import com.sougata.domainApp.shared.RelationMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,7 +17,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class EmployeeServiceImpl implements EmployeeService {
     private final EmployeeRepository repository;
-    private final EmployeeEntityDtoMapping entityDtoMapping;
+    private final EntityDtoMapping entityDtoMapping;
 
     @Override
     public EmployeeDto createEmployee(EmployeeDto dto) {

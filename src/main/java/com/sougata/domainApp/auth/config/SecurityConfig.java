@@ -43,6 +43,7 @@ public class SecurityConfig {
                                 .requestMatchers("/menu-item/**").permitAll()
                                 .requestMatchers("/employee/**").permitAll()
                                 .requestMatchers("/role/**").permitAll()
+                                .requestMatchers("/employee-role-map/**").permitAll()
                                 .anyRequest().authenticated()
                 )
                 .csrf(AbstractHttpConfigurer::disable)

@@ -86,7 +86,7 @@ public class EmployeeEntity implements MasterEntity {
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
                 ", isValid=" + isValid +
-//                ", roles=" + roleNames +
+                ", employeeMappings=" + employeeMappings +
                 '}';
     }
 }

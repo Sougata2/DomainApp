@@ -2,9 +2,9 @@ package com.sougata.domainApp.role.service.impl;
 
 import com.sougata.domainApp.role.dto.RoleDto;
 import com.sougata.domainApp.role.entity.RoleEntity;
-import com.sougata.domainApp.role.mapper.RoleEntityDtoMapping;
 import com.sougata.domainApp.role.repository.EmpRoleRepository;
 import com.sougata.domainApp.role.service.EmpRoleService;
+import com.sougata.domainApp.shared.EntityDtoMapping;
 import com.sougata.domainApp.shared.RelationMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,7 +16,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class EmpRoleServiceImpl implements EmpRoleService {
     private final EmpRoleRepository repository;
-    private final RoleEntityDtoMapping entityDtoMapping;
+    private final EntityDtoMapping entityDtoMapping;
 
     @Override
     public RoleDto createRole(RoleDto dto) {
