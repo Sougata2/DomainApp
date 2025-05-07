@@ -1,5 +1,8 @@
 package com.sougata.domainApp.shared;
 
+import org.hibernate.Hibernate;
+import org.hibernate.proxy.HibernateProxy;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -119,7 +122,13 @@ public class RelationMapper {
             while (!queue.isEmpty()) {
                 ChildParentPair<MasterEntity, MasterDto> u = queue.poll();
                 //System.out.println(u.child);
-                Class<? extends MasterDto> dtoClass = entityDtoMap.get(u.child.getClass());
+                Class<? extends MasterDto> dtoClass;
+                if (u.child instanceof HibernateProxy) {
+                    Class<? extends MasterEntity> actualClass = Hibernate.getClass(u.child);
+                    dtoClass = entityDtoMap.get(actualClass);
+                } else {
+                    dtoClass = entityDtoMap.get(u.child.getClass());
+                }
                 MasterDto v = dtoClass.getDeclaredConstructor().newInstance();
 
                 for (Field df : u.child.getClass().getDeclaredFields()) {
