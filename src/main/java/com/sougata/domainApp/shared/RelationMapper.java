@@ -133,6 +133,7 @@ public class RelationMapper {
 
                 for (Field df : u.child.getClass().getDeclaredFields()) {
                     df.setAccessible(true);
+
                     Field vfield = v.getClass().getDeclaredField(df.getName());
                     vfield.setAccessible(true);
 
@@ -194,10 +195,11 @@ public class RelationMapper {
                 }
             }
             return convertedDto;
+        } catch (NoSuchFieldException ignored) {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-
+        return null;
     }
 
 
