@@ -52,6 +52,20 @@ public class EmployeeRoleMapController {
         }
     }
 
+    @PostMapping("/bulk")
+    public ResponseEntity<List<EmployeeRoleMapDto>> createEmployeeRoleMapBulk(@RequestBody List<EmployeeRoleMapDto> dtos) {
+        logger.info("createEmployeeRoleMapBulk: {}", dtos);
+        try {
+            List<EmployeeRoleMapDto> created = service.createEmployeeRoleMapBulk(dtos);
+            if (created == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            }
+            return ResponseEntity.ok(created);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     @DeleteMapping
     public ResponseEntity<EmployeeRoleMapDto> deleteEmployeeRoleMap(@RequestParam Long employeeId, @RequestParam Long roleId) {
         logger.info("deleteEmployeeRoleMap: {}", employeeId);

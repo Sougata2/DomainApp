@@ -17,4 +17,6 @@ public interface EmployeeRoleMapService {
     EmployeeRoleMapDto deleteEmployeeRoleMap(Long employeeId, Long roleId);
 
     List<RoleDto> findNotAssignedRolesByEmployeeId(Long employeeId);
+
+    List<EmployeeRoleMapDto> createEmployeeRoleMapBulk(List<EmployeeRoleMapDto> dtos);
 }

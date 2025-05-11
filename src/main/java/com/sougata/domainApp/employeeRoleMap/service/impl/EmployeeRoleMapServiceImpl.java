@@ -16,6 +16,7 @@ import com.sougata.domainApp.shared.RelationMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -83,5 +84,28 @@ public class EmployeeRoleMapServiceImpl implements EmployeeRoleMapService {
                                 (RoleDto) RelationMapper.mapToDto(e, entityDtoMapping.getEntityDtoMap())
                 )
                 .toList();
+    }
+
+    @Override
+    public List<EmployeeRoleMapDto> createEmployeeRoleMapBulk(List<EmployeeRoleMapDto> dtos) {
+        Optional<EmployeeEntity> employee = employeeRepository.findById(dtos.getFirst().getEmployee().getId());
+        if (employee.isEmpty()) return null;
+        List<EmployeeRoleMapEntity> mappings = new ArrayList<>();
+        for (EmployeeRoleMapDto dto : dtos) {
+            Optional<RoleEntity> role = roleRepository.findById(dto.getRole().getId());
+            if (role.isEmpty()) return null;
+            EmployeeRoleMapEntity newMapping = new EmployeeRoleMapEntity();
+            newMapping.setEmployee(employee.get());
+            newMapping.setRole(role.get());
+            newMapping.setIsDefault(dto.getIsDefault());
+            mappings.add(newMapping);
+        }
+        List<EmployeeRoleMapEntity> saved = repository.saveAll(mappings);
+        return saved
+                .stream()
+                .map(
+                        e ->
+                                (EmployeeRoleMapDto) RelationMapper.mapToDto(e, entityDtoMapping.getEntityDtoMap())
+                ).toList();
     }
 }

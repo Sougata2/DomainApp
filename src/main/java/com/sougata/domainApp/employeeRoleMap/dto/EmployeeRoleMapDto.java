@@ -33,7 +33,9 @@ public class EmployeeRoleMapDto implements MasterDto {
     public String toString() {
         return "EmployeeRoleMapDto{" +
                 "Id=" + Id +
+                ", employeeId=" + employee.getId() +
                 ", employee=" + employee.getFirstName() + " " + employee.getMiddleName() + " " + employee.getLastName() +
+                ", roleId=" + role.getId() +
                 ", role=" + role.getRoleName() +
                 ", isDefault=" + isDefault +
                 ", isValid=" + isValid +
