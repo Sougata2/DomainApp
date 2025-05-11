@@ -24,8 +24,8 @@ public interface EmployeeRoleMapRepository extends JpaRepository<EmployeeRoleMap
     Optional<EmployeeRoleMapEntity> findEmployeeRoleMapByEmployeeIdAndRoleId(Long employeeId, Long roleId);
 
     @Query("select re from RoleEntity re " +
-            "left outer join re.roleMappings rm " +
-            "where (rm.employee.id != :employeeId or rm.employee.id is null) " +
-            "and re.isValid = 1")
+            "left join EmployeeRoleMapEntity erme " +
+            "on erme.role.id = re.id and erme.employee.id = :employeeId and erme.isValid = 1 " +
+            "where erme.Id is null")
     List<RoleEntity> findNotAssignedRolesByEmployeeId(Long employeeId);
 }
