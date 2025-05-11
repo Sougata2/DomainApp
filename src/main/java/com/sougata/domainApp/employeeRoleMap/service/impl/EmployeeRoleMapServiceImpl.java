@@ -8,6 +8,7 @@ import com.sougata.domainApp.employeeRoleMap.entity.EmployeeRoleMapEntity;
 import com.sougata.domainApp.employeeRoleMap.mapper.EmployeeRoleMapMapping;
 import com.sougata.domainApp.employeeRoleMap.repository.EmployeeRoleMapRepository;
 import com.sougata.domainApp.employeeRoleMap.service.EmployeeRoleMapService;
+import com.sougata.domainApp.role.dto.RoleDto;
 import com.sougata.domainApp.role.entity.RoleEntity;
 import com.sougata.domainApp.role.repository.EmpRoleRepository;
 import com.sougata.domainApp.shared.EntityDtoMapping;
@@ -71,5 +72,16 @@ public class EmployeeRoleMapServiceImpl implements EmployeeRoleMapService {
         ogEntity.get().setIsValid(0);
         EmployeeRoleMapEntity savedEntity = repository.save(ogEntity.get());
         return (EmployeeRoleMapDto) RelationMapper.mapToDto(savedEntity, entityDtoMapping.getEntityDtoMap());
+    }
+
+    @Override
+    public List<RoleDto> findNotAssignedRolesByEmployeeId(Long employeeId) {
+        List<RoleEntity> entities = repository.findNotAssignedRolesByEmployeeId(employeeId);
+        return entities.stream()
+                .map(
+                        e ->
+                                (RoleDto) RelationMapper.mapToDto(e, entityDtoMapping.getEntityDtoMap())
+                )
+                .toList();
     }
 }

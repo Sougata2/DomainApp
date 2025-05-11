@@ -1,6 +1,7 @@
 package com.sougata.domainApp.employeeRoleMap.service;
 
 import com.sougata.domainApp.employeeRoleMap.dto.EmployeeRoleMapDto;
+import com.sougata.domainApp.role.dto.RoleDto;
 
 import java.util.List;
 
@@ -14,4 +15,6 @@ public interface EmployeeRoleMapService {
     EmployeeRoleMapDto updateEmployeeRoleMap(EmployeeRoleMapDto dto);
 
     EmployeeRoleMapDto deleteEmployeeRoleMap(Long employeeId, Long roleId);
+
+    List<RoleDto> findNotAssignedRolesByEmployeeId(Long employeeId);
 }
