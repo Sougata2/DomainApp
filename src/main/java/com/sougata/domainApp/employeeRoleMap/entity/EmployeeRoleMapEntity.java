@@ -16,9 +16,14 @@ import java.sql.Timestamp;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "emp_role_map_custom", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"emp_id", "role_id"})
-})
+/*
+ * @Table(name = "emp_role_map_custom", uniqueConstraints = {
+ * @UniqueConstraint(columnNames = {"emp_id", "role_id"})
+ * })
+ *
+ * not required because this will restrict same mapping again.
+ * */
+@Table(name = "emp_role_map_custom")
 public class EmployeeRoleMapEntity implements MasterEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
