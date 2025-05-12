@@ -108,4 +108,13 @@ public class EmployeeRoleMapServiceImpl implements EmployeeRoleMapService {
                                 (EmployeeRoleMapDto) RelationMapper.mapToDto(e, entityDtoMapping.getEntityDtoMap())
                 ).toList();
     }
+
+    @Override
+    public RoleDto findDefaultRoleByEmployeeId(Long employeeId) {
+        Optional<RoleEntity> entity = repository.findDefaultRoleByEmployeeId(employeeId);
+        return entity
+                .map(e ->
+                        (RoleDto) RelationMapper.mapToDto(e, entityDtoMapping.getEntityDtoMap())
+                ).orElse(null);
+    }
 }

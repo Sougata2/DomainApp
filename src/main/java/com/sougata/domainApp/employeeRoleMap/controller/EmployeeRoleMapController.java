@@ -3,6 +3,7 @@ package com.sougata.domainApp.employeeRoleMap.controller;
 import com.sougata.domainApp.employeeRoleMap.dto.EmployeeRoleMapDto;
 import com.sougata.domainApp.employeeRoleMap.service.EmployeeRoleMapService;
 import com.sougata.domainApp.role.dto.RoleDto;
+import com.sougata.domainApp.role.entity.RoleEntity;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +36,20 @@ public class EmployeeRoleMapController {
         logger.info("getNotAssignedRolesByEmployeeId: {}", employeeId);
         try {
             List<RoleDto> dto = service.findNotAssignedRolesByEmployeeId(employeeId);
+            return ResponseEntity.ok(dto);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @GetMapping("/default-role/{employeeId}")
+    public ResponseEntity<RoleDto> getDefaultRoleByEmployeeId(@PathVariable Long employeeId) {
+        logger.info("getDefaultRoleByEmployeeId: {}", employeeId);
+        try {
+            RoleDto dto = service.findDefaultRoleByEmployeeId(employeeId);
+            if (dto == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            }
             return ResponseEntity.ok(dto);
         } catch (Exception e) {
             throw new RuntimeException(e);
