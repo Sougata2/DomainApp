@@ -1,11 +1,9 @@
 package com.sougata.domainApp.employeeRoleMap.service.impl;
 
-import com.sougata.domainApp.auth.repository.RoleRepository;
 import com.sougata.domainApp.employee.entity.EmployeeEntity;
 import com.sougata.domainApp.employee.repository.EmployeeRepository;
 import com.sougata.domainApp.employeeRoleMap.dto.EmployeeRoleMapDto;
 import com.sougata.domainApp.employeeRoleMap.entity.EmployeeRoleMapEntity;
-import com.sougata.domainApp.employeeRoleMap.mapper.EmployeeRoleMapMapping;
 import com.sougata.domainApp.employeeRoleMap.repository.EmployeeRoleMapRepository;
 import com.sougata.domainApp.employeeRoleMap.service.EmployeeRoleMapService;
 import com.sougata.domainApp.role.dto.RoleDto;
@@ -116,5 +114,28 @@ public class EmployeeRoleMapServiceImpl implements EmployeeRoleMapService {
                 .map(e ->
                         (RoleDto) RelationMapper.mapToDto(e, entityDtoMapping.getEntityDtoMap())
                 ).orElse(null);
+    }
+
+    @Override
+    public RoleDto updateDefaultRole(Long employeeId, Long oldRoleId, Long newRoleId) {
+        // get old and role mapping to the employee
+        Optional<EmployeeRoleMapEntity> oldDefaultRoleMap = repository.findEmployeeRoleMapByEmployeeIdAndRoleId(employeeId, oldRoleId);
+        if (oldDefaultRoleMap.isEmpty()) return null;
+        Optional<EmployeeRoleMapEntity> newDefaultRoleMap = repository.findEmployeeRoleMapByEmployeeIdAndRoleId(employeeId, newRoleId);
+        if (newDefaultRoleMap.isEmpty()) return null;
+
+        // update the default role
+        newDefaultRoleMap.get().setIsDefault(1);
+        oldDefaultRoleMap.get().setIsDefault(0);
+        List<EmployeeRoleMapEntity> updated = List.of(newDefaultRoleMap.get(), oldDefaultRoleMap.get());
+        repository.saveAll(updated);
+
+        // get and return the new role
+        Optional<RoleEntity> newDefaultRoleEntity = roleRepository.findById(newRoleId);
+        return newDefaultRoleEntity
+                .map(
+                        e -> (RoleDto) RelationMapper.mapToDto(e, entityDtoMapping.getEntityDtoMap())
+                )
+                .orElse(null);
     }
 }

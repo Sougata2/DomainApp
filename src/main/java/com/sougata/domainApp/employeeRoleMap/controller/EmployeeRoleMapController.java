@@ -3,7 +3,6 @@ package com.sougata.domainApp.employeeRoleMap.controller;
 import com.sougata.domainApp.employeeRoleMap.dto.EmployeeRoleMapDto;
 import com.sougata.domainApp.employeeRoleMap.service.EmployeeRoleMapService;
 import com.sougata.domainApp.role.dto.RoleDto;
-import com.sougata.domainApp.role.entity.RoleEntity;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -62,6 +62,21 @@ public class EmployeeRoleMapController {
         try {
             EmployeeRoleMapDto created = service.createEmployeeRoleMap(dto);
             return ResponseEntity.ok(created);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @PutMapping("/update-default-role")
+    public ResponseEntity<RoleDto> updateDefaultRole(@RequestBody Map<String, Long> dto) {
+        logger.info("updateDefaultRole: {}", dto.toString());
+        try {
+            RoleDto newDefaultRoleDto = service.updateDefaultRole(dto.get("employeeId"), dto.get("oldRoleId"), dto.get("newRoleId"));
+            if (newDefaultRoleDto == null) {
+                logger.error("oldDefaultRoleId: {} or newDefaultRoleId: {} is not found", dto.get("oldRoleId"), dto.get("newRoleId"));
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            }
+            return ResponseEntity.ok(newDefaultRoleDto);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
