@@ -8,6 +8,7 @@ import com.sougata.domainApp.shared.EntityDtoMapping;
 import com.sougata.domainApp.shared.RelationMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -26,6 +27,7 @@ public class MenuItemServiceImpl implements MenuItemService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<MenuItemDto> getAllActiveMenuItemsOrSubMenuItems() {
         return repository.findAllActiveMenuOrSubMenu()
                 .stream()
@@ -47,6 +49,7 @@ public class MenuItemServiceImpl implements MenuItemService {
     }
 
     @Override
+    @Transactional
     public MenuItemDto createMenuItem(MenuItemDto dto) {
         MenuItemEntity entity = (MenuItemEntity) RelationMapper.mapToEntity(dto, entityDtoMapping.getDtoEntityMap());
         MenuItemEntity saved = repository.save(entity);
@@ -54,6 +57,7 @@ public class MenuItemServiceImpl implements MenuItemService {
     }
 
     @Override
+    @Transactional
     public MenuItemDto updateMenuItem(MenuItemDto dto) {
         Optional<MenuItemEntity> og = repository.findById(dto.getId());
         if (og.isEmpty()) return null;

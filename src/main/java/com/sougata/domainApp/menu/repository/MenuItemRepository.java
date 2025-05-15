@@ -15,8 +15,8 @@ public interface MenuItemRepository extends JpaRepository<MenuItemEntity, Long> 
             "where mi.isValid = 1 and mi.menuItem is null")
     List<MenuItemEntity> findActiveMenuItems();
 
-    @Query("select distinct mi from MenuItemEntity  mi " +
-            "left join fetch mi.menuItems " +
+    @Query("select mi from MenuItemEntity  mi " +
+//            "left join fetch mi.menuItems " +
             "where mi.isValid = 1")
     List<MenuItemEntity> findAllActiveMenuOrSubMenu();
 }
